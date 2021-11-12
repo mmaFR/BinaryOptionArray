@@ -3,15 +3,16 @@ package BinaryOptionArray
 import "fmt"
 
 type pair struct {
-	name string
+	name    string
 	enabled bool
 }
 
 type array8 struct {
-	array uint8
+	array   uint8
 	msbMode bool
-	option [8]*pair
+	option  [8]*pair
 }
+
 func (a8 *array8) RegisterOption(name string, index uint8) *array8 {
 	if index > 7 {
 		return a8
@@ -37,7 +38,9 @@ func (a8 *array8) SetOptionValueByName(name string, value bool) *array8 {
 	return a8
 }
 func (a8 *array8) SetOptionValueByIndex(index uint8, value bool) *array8 {
-	if index > 7 {return a8}
+	if index > 7 {
+		return a8
+	}
 	if a8.option[index] != nil {
 		a8.option[index].enabled = value
 	}
@@ -59,7 +62,9 @@ func (a8 *array8) GetOptionValueByName(name string) *bool {
 }
 func (a8 *array8) GetOptionValueByIndex(index uint8) *bool {
 	var r bool
-	if index > 7 {return nil}
+	if index > 7 {
+		return nil
+	}
 	if a8.option[index] != nil {
 		if a8.option[index].enabled {
 			r = true
@@ -79,7 +84,7 @@ func (a8 *array8) SetModeMSB() *array8 {
 func (a8 *array8) Encode() uint8 {
 	a8.array = 0
 	if a8.msbMode {
-		for i:=0;i<8;i++ {
+		for i := 0; i < 8; i++ {
 			if a8.option[i] != nil {
 				if a8.option[i].enabled {
 					a8.array += 0b1 << i
@@ -87,34 +92,51 @@ func (a8 *array8) Encode() uint8 {
 			}
 		}
 	} else {
-		for i:=7;i>-1;i-- {
+		var ii int
+		for i := 7; i > -1; i-- {
 			if a8.option[i] != nil {
 				if a8.option[i].enabled {
-					a8.array += 0b1 << i
+					a8.array += 0b1 << ii
 				}
 			}
+			ii++
 		}
 	}
 	return a8.array
 }
 func (a8 *array8) Decode(v uint8) {
-	var val string = fmt.Sprintf("%b", v)
-	for i, b := range []byte(val) {
-		if a8.option[i] != nil {
-			if b == 49 {
-				a8.option[i].enabled = true
-			} else {
-				a8.option[i].enabled = false
+	var val []byte = []byte(fmt.Sprintf("%08b", v))
+	if a8.msbMode {
+		for i := 0; i < 8; i++ {
+			if a8.option[i] != nil {
+				if val[i] == 49 {
+					a8.option[i].enabled = true
+				} else {
+					a8.option[i].enabled = false
+				}
 			}
+		}
+	} else {
+		var ii int
+		for i := 7; i > -1; i-- {
+			if a8.option[ii] != nil {
+				if val[i] == 49 {
+					a8.option[ii].enabled = true
+				} else {
+					a8.option[ii].enabled = false
+				}
+			}
+			ii++
 		}
 	}
 }
 
 type array16 struct {
-	array uint16
+	array   uint16
 	msbMode bool
-	option [16]*pair
+	option  [16]*pair
 }
+
 func (a16 *array16) RegisterOption(name string, index uint8) *array16 {
 	if index > 15 {
 		return a16
@@ -140,7 +162,9 @@ func (a16 *array16) SetOptionValueByName(name string, value bool) *array16 {
 	return a16
 }
 func (a16 *array16) SetOptionValueByIndex(index uint8, value bool) *array16 {
-	if index > 15 {return a16}
+	if index > 15 {
+		return a16
+	}
 	if a16.option[index] != nil {
 		a16.option[index].enabled = value
 	}
@@ -162,7 +186,9 @@ func (a16 *array16) GetOptionValueByName(name string) *bool {
 }
 func (a16 *array16) GetOptionValueByIndex(index uint8) *bool {
 	var r bool
-	if index > 15 {return nil}
+	if index > 15 {
+		return nil
+	}
 	if a16.option[index] != nil {
 		if a16.option[index].enabled {
 			r = true
@@ -182,7 +208,7 @@ func (a16 *array16) SetModeMSB() *array16 {
 func (a16 *array16) Encode() uint16 {
 	a16.array = 0
 	if a16.msbMode {
-		for i:=0;i<16;i++ {
+		for i := 0; i < 16; i++ {
 			if a16.option[i] != nil {
 				if a16.option[i].enabled {
 					a16.array += 0b1 << i
@@ -190,34 +216,51 @@ func (a16 *array16) Encode() uint16 {
 			}
 		}
 	} else {
-		for i:=15;i>-1;i-- {
+		var ii int
+		for i := 15; i > -1; i-- {
 			if a16.option[i] != nil {
 				if a16.option[i].enabled {
-					a16.array += 0b1 << i
+					a16.array += 0b1 << ii
 				}
 			}
+			ii++
 		}
 	}
 	return a16.array
 }
 func (a16 *array16) Decode(v uint16) {
-	var val string = fmt.Sprintf("%b", v)
-	for i, b := range []byte(val) {
-		if a16.option[i] != nil {
-			if b == 49 {
-				a16.option[i].enabled = true
-			} else {
-				a16.option[i].enabled = false
+	var val []byte = []byte(fmt.Sprintf("%016b", v))
+	if a16.msbMode {
+		for i := 0; i < 16; i++ {
+			if a16.option[i] != nil {
+				if val[i] == 49 {
+					a16.option[i].enabled = true
+				} else {
+					a16.option[i].enabled = false
+				}
 			}
+		}
+	} else {
+		var ii int
+		for i := 15; i > -1; i-- {
+			if a16.option[ii] != nil {
+				if val[i] == 49 {
+					a16.option[ii].enabled = true
+				} else {
+					a16.option[ii].enabled = false
+				}
+			}
+			ii++
 		}
 	}
 }
 
 type array32 struct {
-	array uint32
+	array   uint32
 	msbMode bool
-	option [32]*pair
+	option  [32]*pair
 }
+
 func (a32 *array32) RegisterOption(name string, index uint8) *array32 {
 	if index > 31 {
 		return a32
@@ -243,7 +286,8 @@ func (a32 *array32) SetOptionValueByName(name string, value bool) *array32 {
 	return a32
 }
 func (a32 *array32) SetOptionValueByIndex(index uint8, value bool) *array32 {
-	if index > 31 {return a32
+	if index > 31 {
+		return a32
 	}
 	if a32.option[index] != nil {
 		a32.option[index].enabled = value
@@ -266,7 +310,9 @@ func (a32 *array32) GetOptionValueByName(name string) *bool {
 }
 func (a32 *array32) GetOptionValueByIndex(index uint8) *bool {
 	var r bool
-	if index > 31 {return nil}
+	if index > 31 {
+		return nil
+	}
 	if a32.option[index] != nil {
 		if a32.option[index].enabled {
 			r = true
@@ -286,7 +332,7 @@ func (a32 *array32) SetModeMSB() *array32 {
 func (a32 *array32) Encode() uint32 {
 	a32.array = 0
 	if a32.msbMode {
-		for i:=0;i<32;i++ {
+		for i := 0; i < 32; i++ {
 			if a32.option[i] != nil {
 				if a32.option[i].enabled {
 					a32.array += 0b1 << i
@@ -294,34 +340,51 @@ func (a32 *array32) Encode() uint32 {
 			}
 		}
 	} else {
-		for i:=31;i>-1;i-- {
+		var ii int
+		for i := 31; i > -1; i-- {
 			if a32.option[i] != nil {
 				if a32.option[i].enabled {
-					a32.array += 0b1 << i
+					a32.array += 0b1 << ii
 				}
 			}
+			ii++
 		}
 	}
 	return a32.array
 }
-func (a32 *array32) Decode(v uint32) {
-	var val string = fmt.Sprintf("%b", v)
-	for i, b := range []byte(val) {
-		if a32.option[i] != nil {
-			if b == 49 {
-				a32.option[i].enabled = true
-			} else {
-				a32.option[i].enabled = false
+func (a32 *array32) Decode(v uint8) {
+	var val []byte = []byte(fmt.Sprintf("%032b", v))
+	if a32.msbMode {
+		for i := 0; i < 32; i++ {
+			if a32.option[i] != nil {
+				if val[i] == 49 {
+					a32.option[i].enabled = true
+				} else {
+					a32.option[i].enabled = false
+				}
 			}
+		}
+	} else {
+		var ii int
+		for i := 31; i > -1; i-- {
+			if a32.option[ii] != nil {
+				if val[i] == 49 {
+					a32.option[ii].enabled = true
+				} else {
+					a32.option[ii].enabled = false
+				}
+			}
+			ii++
 		}
 	}
 }
 
 type array64 struct {
-	array uint64
+	array   uint64
 	msbMode bool
-	option [64]*pair
+	option  [64]*pair
 }
+
 func (a64 *array64) RegisterOption(name string, index uint8) *array64 {
 	if index > 63 {
 		return a64
@@ -347,7 +410,8 @@ func (a64 *array64) SetOptionValueByName(name string, value bool) *array64 {
 	return a64
 }
 func (a64 *array64) SetOptionValueByIndex(index uint8, value bool) *array64 {
-	if index > 63 {return a64
+	if index > 63 {
+		return a64
 	}
 	if a64.option[index] != nil {
 		a64.option[index].enabled = value
@@ -370,7 +434,9 @@ func (a64 *array64) GetOptionValueByName(name string) *bool {
 }
 func (a64 *array64) GetOptionValueByIndex(index uint8) *bool {
 	var r bool
-	if index > 63 {return nil}
+	if index > 63 {
+		return nil
+	}
 	if a64.option[index] != nil {
 		if a64.option[index].enabled {
 			r = true
@@ -390,7 +456,7 @@ func (a64 *array64) SetModeMSB() *array64 {
 func (a64 *array64) Encode() uint64 {
 	a64.array = 0
 	if a64.msbMode {
-		for i:=0;i<64;i++ {
+		for i := 0; i < 64; i++ {
 			if a64.option[i] != nil {
 				if a64.option[i].enabled {
 					a64.array += 0b1 << i
@@ -398,30 +464,46 @@ func (a64 *array64) Encode() uint64 {
 			}
 		}
 	} else {
-		for i:=63;i>-1;i-- {
+		var ii int
+		for i := 63; i > -1; i-- {
 			if a64.option[i] != nil {
 				if a64.option[i].enabled {
-					a64.array += 0b1 << i
+					a64.array += 0b1 << ii
 				}
 			}
+			ii++
 		}
 	}
 	return a64.array
 }
 func (a64 *array64) Decode(v uint64) {
-	var val string = fmt.Sprintf("%b", v)
-	for i, b := range []byte(val) {
-		if a64.option[i] != nil {
-			if b == 49 {
-				a64.option[i].enabled = true
-			} else {
-				a64.option[i].enabled = false
+	var val []byte = []byte(fmt.Sprintf("%064b", v))
+	if a64.msbMode {
+		for i := 0; i < 64; i++ {
+			if a64.option[i] != nil {
+				if val[i] == 49 {
+					a64.option[i].enabled = true
+				} else {
+					a64.option[i].enabled = false
+				}
 			}
+		}
+	} else {
+		var ii int
+		for i := 63; i > -1; i-- {
+			if a64.option[ii] != nil {
+				if val[i] == 49 {
+					a64.option[ii].enabled = true
+				} else {
+					a64.option[ii].enabled = false
+				}
+			}
+			ii++
 		}
 	}
 }
 
-func NewBinaryOptionArray8() *array8 {return new(array8)}
-func NewBinaryOptionArray16() *array16 {return new(array16)}
-func NewBinaryOptionArray32() *array32 {return new(array32)}
-func NewBinaryOptionArray64() *array64 {return new(array64)}
+func NewBinaryOptionArray8() *array8   { return new(array8) }
+func NewBinaryOptionArray16() *array16 { return new(array16) }
+func NewBinaryOptionArray32() *array32 { return new(array32) }
+func NewBinaryOptionArray64() *array64 { return new(array64) }
